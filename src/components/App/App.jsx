@@ -6,7 +6,6 @@ import { Loader } from 'components/Loader/Loader';
 import { Button } from 'components/Button/Button';
 import { getGallery } from 'api.js';
 import { GalleryModal } from 'components/Modal/Modal';
-import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 import { GlobalStyle } from 'components/GlobalStyle';
 import { toast } from 'react-toastify';

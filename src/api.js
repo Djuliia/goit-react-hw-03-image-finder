@@ -10,7 +10,7 @@ export const getGallery = async (query, page) => {
       orientation: 'horizontal',
       safesearch: true,
       per_page: 12,
-      page:42,
+      page,
     });
     const response = await axios.get(`${BASE_URL}?${searchParams}`);
     return response.data;

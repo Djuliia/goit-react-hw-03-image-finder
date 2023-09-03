@@ -4,7 +4,6 @@ export const SearchbarStyled = styled.header`
   top: 0;
   left: 0;
   position: sticky;
-  z-index: 1100;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,23 +18,22 @@ export const SearchbarStyled = styled.header`
     0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 `;
 
-
 export const SearchForm = styled.form`
-      display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 600px;
-    background-color: #fff;
-    border-radius: 3px;
-    overflow: hidden;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  border-radius: 3px;
+  overflow: hidden;
 `;
 
 export const SearchFormBtn = styled.button`
-    display: inline-block;
+  display: inline-block;
   width: 48px;
   height: 48px;
   border: 0;
-  /* background-image: url('https://image.flaticon.com/icons/svg/149/149852.svg'); */
+  background-image: url('https://cdn-icons-png.flaticon.com/512/10905/10905219.png');
   background-size: 40%;
   background-repeat: no-repeat;
   background-position: center;
@@ -43,21 +41,21 @@ export const SearchFormBtn = styled.button`
   transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   outline: none;
-  &:hover{
+  &:hover {
     opacity: 1;
   }
 `;
 
 export const SearchFormBtnLabel = styled.span`
   position: absolute;
-width: 1px;
-height: 1px;
-padding: 0;
-overflow: hidden;
-clip: rect(0, 0, 0, 0);
-white-space: nowrap;
-clip-path: inset(50%);
-border: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+  border: 0;
 `;
 
 export const SearchFormInput = styled.input`
@@ -70,8 +68,7 @@ export const SearchFormInput = styled.input`
   padding-left: 4px;
   padding-right: 4px;
   ::placeholder {
-  font: inherit;
-  font-size: 18px;
-}
+    font: inherit;
+    font-size: 18px;
+  }
 `;
-

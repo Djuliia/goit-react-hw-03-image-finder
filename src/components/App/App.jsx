@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { SearchBar } from 'components/SearchBar/SearchBar';
 import { Container } from './App.styled';
 import { Loader } from 'components/Loader/Loader';
@@ -8,7 +8,6 @@ import { getGallery } from 'api.js';
 import { GalleryModal } from 'components/Modal/Modal';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 import { GlobalStyle } from 'components/GlobalStyle';
-import { toast } from 'react-toastify';
 
 export class App extends Component {
   state = {
@@ -18,55 +17,30 @@ export class App extends Component {
     showModal: false,
     error: false,
     loading: false,
+    srcImage: null,
+    total: 0,
+    showLoadMoreButton: false,
   };
-
-  // async componentDidUpdate(prevProps, prevState) {
-  // if (
-  //   this.state.page !== prevState.page ||
-  //   this.state.query !== prevState.query
-  // )
-  // {
-  // try {
-  //   this.setState({loading : true, error: false});
-  //   console.log('query:', this.state.query);
-  //   console.log('page:', this.state.page);
-  //     const images = await getGallery(this.state.query, this.state.page);
-  //     this.setState({images: images.hits});
-  // }
-
-  //     catch (error) {
-  //       this.setState({error: true});
-  //     } finally {
-  //           this.setState({loading: false});
-  //          }
-  //   }
-  // }
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.state.page !== prevState.page ||
-      this.state.query !== prevState.query
+      (prevState.query !== this.state.query &&
+        this.state.query.split('/').pop() !== '') ||
+      prevState.page !== this.state.page
     ) {
       this.setState({ loading: true, error: false });
-      console.log('query:', this.state.query);
-      console.log('page:', this.state.page);
-      getGallery(this.state.query, this.state.page)
-        .then(({ hits }) => {
-          console.log('API Response:', hits);
+      getGallery(this.state.query.split('/').pop(), this.state.page)
+        .then(({ hits, totalHits }) => {
           if (!hits.length) {
             toast.error(
               'Sorry, there are no images matching your search query. Please try again.'
             );
             return;
           }
-          this.setState(
-            prevState => ({
-              images: [...prevState.images, ...hits],
-            }),
-            () => {
-              console.log('Updated State:', this.state.images);
-            }
-          );
+          this.setState(prevState => ({
+            images: hits,
+            total: totalHits,
+          }));
         })
         .catch(error => this.setState({ error: true }))
         .finally(() => this.setState({ loading: false }));
@@ -75,19 +49,24 @@ export class App extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    const search = e.currentTarget.elements.query.value.trim();
+    if (!search) {
+      toast.error('Please fill in the field!');
+      return;
+    }
     this.setState({
-      query: e.target.elements.query.value.trim(),
+      query: `${Date.now()}/${search}`,
       images: [],
       page: 1,
     });
   };
 
-  openModal = () => {
-    this.setState({ showModal: true });
+  openModal = image => {
+    this.setState({ showModal: true, srcImage: image });
   };
 
   closeModal = () => {
-    this.setState({ showModal: false });
+    this.setState({ showModal: false, srcImage: null });
   };
 
   handleLoadMore = () => {
@@ -95,7 +74,8 @@ export class App extends Component {
   };
 
   render() {
-    const { showModal, images, loading, error } = this.state;
+    const { showModal, images, loading, error, srcImage, total, page } =
+      this.state;
     return (
       <Container>
         <SearchBar onSubmit={this.handleSubmit} />
@@ -104,12 +84,14 @@ export class App extends Component {
         {images.length > 0 && (
           <ImageGallery images={images} openModal={this.openModal} />
         )}
-        {!images.length && <Button onClick={this.handleLoadMore} />}
+        {images.length > 0 && page * 12 < total && (
+          <Button onClick={this.handleLoadMore} />
+        )}
         {showModal && (
           <GalleryModal
             isOpen={showModal}
             onRequestClose={this.closeModal}
-            images={images}
+            image={srcImage}
           />
         )}
         <GlobalStyle />

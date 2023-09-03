@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { SearchBar } from 'components/SearchBar/SearchBar';
 import { Container } from './App.styled';
 import { Loader } from 'components/Loader/Loader';
@@ -8,6 +8,7 @@ import { getGallery } from 'api.js';
 import { GalleryModal } from 'components/Modal/Modal';
 import { ImageGallery } from 'components/ImageGallery/ImageGallery';
 import { GlobalStyle } from 'components/GlobalStyle';
+import generate from 'random-id';
 
 export class App extends Component {
   state = {
@@ -19,16 +20,17 @@ export class App extends Component {
     loading: false,
     srcImage: null,
     total: 0,
-     };
+    randomId: '',
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (
       (prevState.query !== this.state.query &&
-        this.state.query.split('/').pop() !== '') ||
+        prevState.randomId !== this.state.randomId) ||
       prevState.page !== this.state.page
     ) {
       this.setState({ loading: true, error: false });
-      getGallery(this.state.query.split('/').pop(), this.state.page)
+      getGallery(this.state.query, this.state.page)
         .then(({ hits, totalHits }) => {
           if (!hits.length) {
             toast.error(
@@ -37,7 +39,7 @@ export class App extends Component {
             return;
           }
           this.setState(prevState => ({
-            images: hits,
+            images: [...prevState.images, ...hits],
             total: totalHits,
           }));
         })
@@ -46,17 +48,12 @@ export class App extends Component {
     }
   }
 
-  handleSubmit = e => {
-    e.preventDefault();
-    const search = e.currentTarget.elements.query.value.trim();
-    if (!search) {
-      toast.error('Please fill in the field!');
-      return;
-    }
+  handleSubmit = query => {
     this.setState({
-      query: `${Date.now()}/${search}`,
+      query,
       images: [],
       page: 1,
+      randomId: generate(),
     });
   };
 
@@ -94,7 +91,6 @@ export class App extends Component {
           />
         )}
         <GlobalStyle />
-        <Toaster position="top-right" />
       </Container>
     );
   }

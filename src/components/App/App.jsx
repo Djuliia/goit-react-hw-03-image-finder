@@ -19,8 +19,7 @@ export class App extends Component {
     loading: false,
     srcImage: null,
     total: 0,
-    showLoadMoreButton: false,
-  };
+     };
 
   componentDidUpdate(prevProps, prevState) {
     if (

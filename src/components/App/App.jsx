@@ -21,12 +21,13 @@ export class App extends Component {
     srcImage: null,
     total: 0,
     randomId: '',
+    showBtn: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      (prevState.query !== this.state.query &&
-        prevState.randomId !== this.state.randomId) ||
+      prevState.query !== this.state.query ||
+      prevState.randomId !== this.state.randomId ||
       prevState.page !== this.state.page
     ) {
       this.setState({ loading: true, error: false });
@@ -38,10 +39,14 @@ export class App extends Component {
             );
             return;
           }
-          this.setState(prevState => ({
-            images: [...prevState.images, ...hits],
+          const newImages = [...prevState.images, ...hits];
+          const showBtn = this.state.page < Math.ceil(totalHits / 12);
+
+          this.setState({
+            images: newImages,
             total: totalHits,
-          }));
+            showBtn,
+          });
         })
         .catch(error => this.setState({ error: true }))
         .finally(() => this.setState({ loading: false }));
@@ -70,8 +75,7 @@ export class App extends Component {
   };
 
   render() {
-    const { showModal, images, loading, error, srcImage, total, page } =
-      this.state;
+    const { showModal, images, loading, error, srcImage, showBtn } = this.state;
     return (
       <Container>
         <SearchBar onSubmit={this.handleSubmit} />
@@ -80,9 +84,7 @@ export class App extends Component {
         {images.length > 0 && (
           <ImageGallery images={images} openModal={this.openModal} />
         )}
-        {images.length > 0 && page * 12 < total && (
-          <Button onClick={this.handleLoadMore} />
-        )}
+        {showBtn && <Button onClick={this.handleLoadMore} />}
         {showModal && (
           <GalleryModal
             isOpen={showModal}

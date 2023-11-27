@@ -39,7 +39,7 @@ export class App extends Component {
             );
             return;
           }
-          const newImages = [...prevState.images, ...hits];
+          const newImages = [...this.state.images, ...hits];
           const showBtn = this.state.page < Math.ceil(totalHits / 12);
 
           this.setState({
